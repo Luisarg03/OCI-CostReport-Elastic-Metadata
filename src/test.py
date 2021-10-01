@@ -22,4 +22,4 @@ def count_rows_oci(client ,index, filename):
     return rows
 
 
-count_rows_oci(es, "oci-df", "593303")
+count_rows_oci(es, "oci-dc", "593303")

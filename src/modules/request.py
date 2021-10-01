@@ -99,8 +99,7 @@ def RequestDownload(client, bucket, start, esclient, account, index, path):
                 count = count + 1
             count = count - 1
 
-        print('regex para:', filename, 'en:', index)
-        escount = count_rows_oci(esclient, index, filename)
+        escount = count_rows_oci(esclient, index, filename[:-7].replace('0001', ''))
         diff = count - escount
 
         if diff != 0:
