@@ -19,8 +19,7 @@ def client():
     '''
     try:
         proes = Elasticsearch(
-            host=["rgioddbprd57455.dtvpan.com","rgioddbprd57456.dtvpan.com","rgioddbprd57457.dtvpan.com"],
-            port=9200,
+            ["rgioddbprd57455.dtvpan.com","rgioddbprd57456.dtvpan.com","rgioddbprd57457.dtvpan.com"],
             http_auth=("logstash", "logstash"),
             use_ssl=True
         )
