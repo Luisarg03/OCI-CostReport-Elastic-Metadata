@@ -99,7 +99,6 @@ def RequestDownload(client, bucket, start, esclient, account, index, path):
                 count = count + 1
             count = count - 1
 
-        filename = filename[:-7]
         escount = count_rows_oci(esclient, index, filename)
         diff = count - escount
 
@@ -109,7 +108,7 @@ def RequestDownload(client, bucket, start, esclient, account, index, path):
             diff_bool = False
 
         info_dict = {
-            'filename': filename,
+            'filename': filename[:-7],
             'timecreated': timecreated.strftime("%Y-%m-%d %H:%M:%S"),
             'size': size,
             'account': account,

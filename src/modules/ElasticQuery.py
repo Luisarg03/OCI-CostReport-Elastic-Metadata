@@ -90,7 +90,7 @@ def count_rows_oci(client ,index, filename):
     '''
     # try:
     s = Search(using=client, index=index) \
-        .query('regexp', filename=".*{}.*".format(filename))
+        .query('regexp', path=".*{}.*".format(filename))
     rows = s.count()
     # except:
     #     rows = 0
