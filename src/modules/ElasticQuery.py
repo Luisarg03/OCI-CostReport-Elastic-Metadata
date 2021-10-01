@@ -88,13 +88,13 @@ def count_rows_oci(client ,index, filename):
     '''
     Devuelve cantidad de registros del file especificado
     '''
-    try:
-        s = Search(using=client, index=index) \
-            .query('regexp', filename=".*{}.*".format(filename))
-        rows = s.count()
-    except:
-        rows = 0
-
+    # try:
+    s = Search(using=client, index=index) \
+        .query('regexp', filename=".*{}.*".format(filename))
+    rows = s.count()
+    # except:
+    #     rows = 0
+    print(rows)
     return rows
 
 
