@@ -70,7 +70,7 @@ def lastupdate(client, index):
     filename = None
     try:
         s = Search(using=client, index=index) \
-        .sort({ "timecreated": "desc"}) \
+        .sort({ "Date": "desc"}) \
         .extra(size=1)
 
         response = s.execute()
@@ -90,7 +90,7 @@ def count_rows_oci(client ,index, filename):
     '''
     # try:
     s = Search(using=client, index=index) \
-        .query('regexp', path=".*{}.*".format(filename))
+        .query('regexp', filename=".*{}.*".format(filename))
     rows = s.count()
     # except:
     #     rows = 0

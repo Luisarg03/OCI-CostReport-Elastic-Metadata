@@ -3,6 +3,7 @@
 import gzip
 import json
 import os
+import datetime
 import pandas as pd
 from modules.ElasticQuery import count_rows_oci
 
@@ -47,7 +48,7 @@ def getfiles(client, bucket, file):
     return value
 
 
-def RequestDownload(client, bucket, start, esclient, account, index, path):
+def RequestDownload(client, bucket, start, time_start, esclient, account, index, path):
     '''
     Descarga los files de costos desde OCI 
     Parameters
@@ -72,7 +73,7 @@ def RequestDownload(client, bucket, start, esclient, account, index, path):
     report_bucket_objects = client.list_objects(namespace_name=namespace,
                                                 bucket_name=bucket,
                                                 prefix=prefix,
-                                                start_after=start,
+                                                start_after='reports/cost-csv/0001000000595750.csv.gz',
                                                 fields=fields)
 
     for i in report_bucket_objects.data.objects:
@@ -81,55 +82,62 @@ def RequestDownload(client, bucket, start, esclient, account, index, path):
                                            bucket_name=bucket,
                                            object_name=i.name)
 
-        metadata = []
-        filename = i.name.rsplit('/', 1)[-1]
-        timecreated = i.time_created
-        size = i.size
-        _dir = path+filename
-        print('Descargando desde: ', filename, 'hacia: ', _dir)
+        time_file = i.time_created.strftime("%Y-%m-%d %H:%M:%S")
+        time_file = datetime.datetime.strptime(time_file, "%Y-%m-%d %H:%M:%S")
+
+        if time_file >= time_start:
+            metadata = []
+            filename = i.name.rsplit('/', 1)[-1]
+            timecreated = i.time_created
+            size = i.size
+            _dir = path+filename
+            print('Descargando desde: ', filename, 'hacia: ', _dir)
 
 
-        with open(_dir, 'wb') as f:
-            for chunk in object_details.data.raw.stream(2048 ** 2, decode_content=False):
-                f.write(chunk)
+            with open(_dir, 'wb') as f:
+                for chunk in object_details.data.raw.stream(2048 ** 2, decode_content=False):
+                    f.write(chunk)
 
-        with gzip.open(_dir,'rt') as f:
-            count = 0
-            for line in f:
-                count = count + 1
-            count = count - 1
+            with gzip.open(_dir,'rt') as f:
+                count = 0
+                for line in f:
+                    count = count + 1
+                count = count - 1
 
-        escount = count_rows_oci(esclient, index, filename[:-7].replace('0001', ''))
-        diff = count - escount
+            escount = count_rows_oci(esclient, index, filename[:-7].replace('0001', ''))
+            diff = count - escount
 
-        if diff != 0:
-            diff_bool = True
-        else:
-            diff_bool = False
+            if diff != 0:
+                diff_bool = True
+            else:
+                diff_bool = False
 
-        info_dict = {
-            'filename': filename[:-7],
-            'timecreated': timecreated.strftime("%Y-%m-%d %H:%M:%S"),
-            'size': size,
-            'account': account,
-            'rowsoci': count,
-            'rowselastic': escount,
-            'diff': diff,
-            'difference': diff_bool
-            }
+            info_dict = {
+                'filename': filename[:-7],
+                'timecreated': timecreated.strftime("%Y-%m-%d %H:%M:%S"),
+                'size': size,
+                'account': account,
+                'rowsoci': count,
+                'rowselastic': escount,
+                'diff': diff,
+                'difference': diff_bool
+                }
 
-        metadata.append(info_dict)
+            metadata.append(info_dict)
 
-        output_file = open(_dir[:-7]+'.json', 'w', encoding='utf-8')
+            output_file = open(_dir[:-7]+'.json', 'w', encoding='utf-8')
 
-        for dic in metadata:
-            json.dump(dic, output_file)
-            output_file.write("\n")
-        output_file.close()
+            for dic in metadata:
+                json.dump(dic, output_file)
+                output_file.write("\n")
+            output_file.close()
 
 
-        ## Elimino el .gz descargado para optimizar espacio
-        if os.path.exists(_dir):
-            os.remove(_dir)
+            ## Elimino el .gz descargado para optimizar espacio
+            if os.path.exists(_dir):
+                os.remove(_dir)
+            else:
+                pass
+
         else:
             pass

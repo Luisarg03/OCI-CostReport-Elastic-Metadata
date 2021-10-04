@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import datetime
 import time
 from modules.path import create_paths
 from modules.client import get_client
@@ -11,7 +12,7 @@ from modules.ElasticQuery import insert ### Dev funtion
 
 ### Configuracion cliente OCI
 config = '../OciConfig/config.prod'
-account = 'NC'
+account = 'DC'
 ociclient = get_client(config, account)
 
 
@@ -30,31 +31,37 @@ esclient = esclient['dev']
 # index_target = 'oci-metadata'
 # esclient = esclient['pro']
 
+### Hora server
+time_start = datetime.datetime.now()
+time_start = time_start.strftime("%Y-%m-%d 00:00:00")
+time_start = datetime.datetime.strptime(time_start, "%Y-%m-%d %H:%M:%S")
+
+### Intervalos de dias a tomar en la descarga
+days = 4
+time_start = time_start - datetime.timedelta(days=days)
+### Numero de dias para eliminar registros
+
 
 if __name__ == '__main__':
     ### Directorio de descargas
     path = create_paths()
 
     ### Borrado de indice metadata
-    # days = 1
-    # esdelete(esclient, index_target, days)
-    # print('\n Tratando de eliminar los registros de', index_target)
-    # time.sleep(10)
+    esdelete(esclient, index_target, days)
+    print('\n Tratando de eliminar los registros de', index_target)
+    time.sleep(3)
 
     ### Obtengo la ultima actualizacion de los indices
     start = lastupdate(esclient, index_target)
     start = getfiles(ociclient['client'], ociclient['bucket'], start)
     print('\n Nombre del files:',start)
 
-    # ################################
-    start = 'reports/cost-csv/0001000000692364.csv.gz'
-    # ################################
-
     # Descarga de los nuevos files
     list_files = RequestDownload(
         ociclient['client'],
         ociclient['bucket'],
         start,
+        time_start,
         esclient,
         account,
         index,
@@ -63,4 +70,4 @@ if __name__ == '__main__':
 
 
     ### Desa funcion
-    # insert(path, esclient, index_target)
+    insert(path, esclient, index_target)
