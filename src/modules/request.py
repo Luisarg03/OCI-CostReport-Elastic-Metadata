@@ -73,7 +73,7 @@ def RequestDownload(client, bucket, start, time_start, esclient, account, index,
     report_bucket_objects = client.list_objects(namespace_name=namespace,
                                                 bucket_name=bucket,
                                                 prefix=prefix,
-                                                start_after='reports/cost-csv/0001000000595750.csv.gz',
+                                                start_after=start,
                                                 fields=fields)
 
     for i in report_bucket_objects.data.objects:

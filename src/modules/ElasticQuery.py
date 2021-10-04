@@ -79,7 +79,9 @@ def lastupdate(client, index):
             
         return filename
     except:
-        return filename
+        filename = 'reports/cost-csv/0001000000564150.csv.gz' ### Asignar como -> None <- para reprocesar todo
+
+    return filename
 
     
 

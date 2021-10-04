@@ -37,7 +37,7 @@ time_start = time_start.strftime("%Y-%m-%d 00:00:00")
 time_start = datetime.datetime.strptime(time_start, "%Y-%m-%d %H:%M:%S")
 
 ### Intervalos de dias a tomar en la descarga
-days = 4
+days = 60
 time_start = time_start - datetime.timedelta(days=days)
 ### Numero de dias para eliminar registros
 
