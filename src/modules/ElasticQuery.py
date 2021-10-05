@@ -79,7 +79,7 @@ def lastupdate(client, index):
             
         return filename
     except:
-        filename = 'reports/cost-csv/0001000000564150.csv.gz' ### Asignar como -> None <- para reprocesar todo
+        filename = 'reports/cost-csv/0001000000593551.csv.gz' ### Asignar como -> None <- para reprocesar todo
 
     return filename
 
@@ -90,13 +90,13 @@ def count_rows_oci(client ,index, filename):
     '''
     Devuelve cantidad de registros del file especificado
     '''
-    # try:
-    s = Search(using=client, index=index) \
-        .query('regexp', filename=".*{}.*".format(filename))
-    rows = s.count()
-    # except:
-    #     rows = 0
-    print(rows)
+    try:
+        s = Search(using=client, index=index) \
+            .query('regexp', filename=".*{}.*".format(filename))
+        rows = s.count()
+    except:
+        rows = 0
+
     return rows
 
 
@@ -127,3 +127,11 @@ def insert(path, client, index):
         pass
 
     return True
+
+
+def listreprocess(data, path):
+    df = pd.DataFrame(data)
+    df = df.loc[df['difference'] == True]
+    df.to_csv(path+'reproceso.csv', index=False)
+
+    return None

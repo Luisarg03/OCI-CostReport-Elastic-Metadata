@@ -4,7 +4,7 @@ import datetime
 import time
 from modules.path import create_paths
 from modules.client import get_client
-from modules.ElasticQuery import client, esdelete, lastupdate
+from modules.ElasticQuery import client, esdelete, lastupdate, listreprocess
 from modules.request import getfiles, RequestDownload
 
 from modules.ElasticQuery import insert ### Dev funtion
@@ -21,10 +21,9 @@ esclient = client()
 print('\n clientes elastic: ', esclient)
 
 ### Variables para desarrollo
+esclient = esclient['dev']
 index = "oci-dev"
 index_target = 'oci-metadata-dev'
-esclient = esclient['dev']
-
 
 ### Variables productivas
 # index = "oci-nc"
@@ -37,9 +36,8 @@ time_start = time_start.strftime("%Y-%m-%d 00:00:00")
 time_start = datetime.datetime.strptime(time_start, "%Y-%m-%d %H:%M:%S")
 
 ### Intervalos de dias a tomar en la descarga
-days = 60
+days = 2
 time_start = time_start - datetime.timedelta(days=days)
-### Numero de dias para eliminar registros
 
 
 if __name__ == '__main__':
@@ -47,9 +45,9 @@ if __name__ == '__main__':
     path = create_paths()
 
     ### Borrado de indice metadata
-    esdelete(esclient, index_target, days)
-    print('\n Tratando de eliminar los registros de', index_target)
-    time.sleep(3)
+    # esdelete(esclient, index_target, days)
+    # print('\n Tratando de eliminar los registros de', index_target)
+    # time.sleep(3)
 
     ### Obtengo la ultima actualizacion de los indices
     start = lastupdate(esclient, index_target)
@@ -68,6 +66,7 @@ if __name__ == '__main__':
         path
         )
 
-
+    listreprocess(list_files, path)
+    
     ### Desa funcion
-    insert(path, esclient, index_target)
+    # insert(path, esclient, index_target)

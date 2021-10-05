@@ -76,6 +76,8 @@ def RequestDownload(client, bucket, start, time_start, esclient, account, index,
                                                 start_after=start,
                                                 fields=fields)
 
+    dataframe = []
+
     for i in report_bucket_objects.data.objects:
         filename = i.name
         object_details = client.get_object(namespace_name=namespace,
@@ -124,6 +126,7 @@ def RequestDownload(client, bucket, start, time_start, esclient, account, index,
                 }
 
             metadata.append(info_dict)
+            dataframe.append(info_dict)
 
             output_file = open(_dir[:-7]+'.json', 'w', encoding='utf-8')
 
@@ -141,3 +144,5 @@ def RequestDownload(client, bucket, start, time_start, esclient, account, index,
 
         else:
             pass
+    
+    return dataframe
