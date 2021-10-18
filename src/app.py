@@ -45,9 +45,9 @@ if __name__ == '__main__':
     path = create_paths()
 
     ### Borrado de indice metadata
-    # esdelete(esclient, index_target, days)
-    # print('\n Tratando de eliminar los registros de', index_target)
-    # time.sleep(3)
+    esdelete(esclient, index_target, days)
+    print('\n Tratando de eliminar los registros de', index_target)
+    time.sleep(3)
 
     ### Obtengo la ultima actualizacion de los indices
     start = lastupdate(esclient, index_target)
@@ -69,4 +69,4 @@ if __name__ == '__main__':
     listreprocess(list_files, path)
     
     ### Desa funcion
-    # insert(path, esclient, index_target)
+    insert(path, esclient, index_target)
