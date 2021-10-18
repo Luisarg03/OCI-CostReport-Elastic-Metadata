@@ -10,12 +10,13 @@ from elasticsearch.helpers import bulk
 def client():
     '''
     Configuracion del cliente para la cuenta Elastic
+
     Parameters
     ----------
 
     Returns
     ---------
-    dict
+    dict -> Diccionario con las variables de los clientes Elastic (cliente local o cliente productivo)
     '''
     try:
         proes = Elasticsearch(
@@ -44,6 +45,19 @@ def client():
 def esdelete(client, index, days):
     '''
     Elimina los registros en el indice especificado en el rango de dias especificado
+
+    Parameters
+    ----------
+    client: elasticsearch obj
+        cleinte elastic
+    index: str
+        indice de elastic a donde apuntar
+    days: int
+        limite de dias que se tomara en el rango que se usara para eliminar los registros
+
+    Returns
+    ---------
+    bool
     '''
     try:
         s = Search(using=client, index=index).query('range' ,  **{'timecreated': {'gte': "now-"+str(days)+"d/d"}})
@@ -56,9 +70,10 @@ def esdelete(client, index, days):
 def lastupdate(client, index):
     '''
     Configuracion del cliente para la cuenta Elastic
+
     Parameters
     ----------
-    client : elasticsearch obj
+    client: elasticsearch obj
         obj con la configuracion de elasticsearch
     index: str
         indice elastic desde donde consumir los datos
@@ -89,6 +104,19 @@ def lastupdate(client, index):
 def count_rows_oci(client ,index, filename):
     '''
     Devuelve cantidad de registros del file especificado
+
+    Parameters
+    ----------
+    client: elasticsearch obj
+        obj con la configuracion de elasticsearch
+    index: str
+        indice elastic desde donde consumir los datos
+    filename: str
+        nombre del archivo que se usara para hacer la busqueda y el count en elastic
+
+    Returns
+    ---------
+    int
     '''
     try:
         s = Search(using=client, index=index) \
@@ -103,10 +131,16 @@ def count_rows_oci(client ,index, filename):
 def insert(path, client, index):
     '''
     Funcion para desarrollo ....
-    Bulk insert elastic
+    Bulk insert en elastic
     
     Parameters
     ----------
+    path: str
+        directorio desde donde consumir los .json
+    client: elasticsearch obj
+        cliente elasticsearch
+    index: str
+        indice a donde apuntar
 
     Returns
     ---------
@@ -130,6 +164,22 @@ def insert(path, client, index):
 
 
 def listreprocess(data, path):
+    '''
+    -> Funcion principal del pipeline <-
+    Genera el .csv con los nombre de los files que no existen en elasticsearch 
+    o los registros existentes en elastisearch no coincidan con los del bucket de oracle
+
+    Parameters
+    ----------
+    path: data
+        lista de datos en formato json que se obtienen de la funcion -> RequestDownload <-
+    client: str
+        directorio donde se almacenara el .csv
+
+    Returns
+    ---------
+    bool
+    '''
     df = pd.DataFrame(data)
     df = df.loc[df['difference'] == True]
     df.to_csv(path+'reproceso.csv', index=False)

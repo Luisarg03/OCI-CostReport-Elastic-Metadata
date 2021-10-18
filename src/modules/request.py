@@ -9,6 +9,22 @@ from modules.ElasticQuery import count_rows_oci
 
 
 def getfiles(client, bucket, file):
+    '''
+    Genere el path completo del file en el bucket oci a partir del -> filename <- encontrado en elasticsearh
+
+    Parameters
+    ----------
+    client : oci obj
+        obj con la configuracion de OCI
+    bucket: str
+        nombre del bucket
+    file: str
+        nombre encontrado en el campo -> filename <- en elastisearch
+        
+    Returns
+    ---------
+    str
+    '''
     last = None
     list_data = []
 
@@ -58,11 +74,16 @@ def RequestDownload(client, bucket, start, time_start, esclient, account, index,
     bucket: str
         nombre del bucket
     start: str
-        nombre de file desde donde empezar las descargas (excluye)
-    end: str
-        nombre de file donde finalizar las descargas (excluye)
+        nombre de file desde donde empezar las descargas en el bucket (excluye)
+    time_start: datetime
+        fecha con la cual iniciara la busqueda de los files en el bucket
+    esclient: elasticsearch obj
+        cliente que se usara para buscar los registros en elasticsearch
+    index: str
+        indice elasticsearch a donde apuntar
     path: str
         directorio donde se guardaran las descargas
+
     Returns
     ---------
     list

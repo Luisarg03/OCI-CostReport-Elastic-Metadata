@@ -2,6 +2,10 @@ from elasticsearch import Elasticsearch
 from elasticsearch_dsl import Search
 
 
+##################################
+# File para hacer pruebas simples#
+##################################
+
 es = Elasticsearch(
     ["rgioddbprd57455.dtvpan.com","rgioddbprd57456.dtvpan.com","rgioddbprd57457.dtvpan.com"],
     http_auth=("logstash", "logstash"),

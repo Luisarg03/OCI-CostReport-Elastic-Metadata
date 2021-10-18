@@ -12,7 +12,7 @@ def get_client(file_location, account):
     
     Returns
     ---------
-    dict
+    dict -> diccionario con las variables de clientes para la conexion cloud
     '''
     # ### configuracion de credenciales ###
     config = oci.config.from_file(file_location=file_location, profile_name=account)
